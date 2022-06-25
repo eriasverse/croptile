@@ -27,7 +27,7 @@ class bcolors:
 
 def elapsedTime():
     rawTime = time.time() - startTime
-    formatTime = round(rawTime, 1)
+    formatTime = round(rawTime, 5)
     strTime = str(formatTime)
     return strTime
 
@@ -40,7 +40,7 @@ def generateCropTile(imageIn, tiles):
         generateTile = imageIn.crop(tile['box'])
 
         generateTile.save(newPath + '/tiles/' +
-                          'tile-' + tile['name'] + '.png')
+                          'tile-' + tile['name'] + '.jpg', optimize=True)
 
         print(bcolors.OKGREEN + '[' + elapsedTime() +
               ' INFO]' + bcolors.RESET + ' Created tile: ' + 'tile-' + tile['name'])
