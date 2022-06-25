@@ -5,6 +5,7 @@ import numpy
 import sys
 import os
 import time
+import shutil
 
 from numpy import pi
 from PIL import Image
@@ -24,11 +25,13 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    CWHITE = '\33[37m'
+    RESET = '\033[0m'
 
 
 def elapsedTime():
     rawTime = time.time() - startTime
-    formatTime = round(rawTime, 1)
+    formatTime = round(rawTime, 5)
     strTime = str(formatTime)
     return strTime
 
@@ -119,43 +122,43 @@ newPath = sys.argv[1].rsplit('.', 1)[0]
 
 if os.path.isdir(sys.argv[1].rsplit('.', 1)[0]):
     newPath = sys.argv[1].rsplit('.', 1)[0] + '-v' + str(randrange(0, 100, 1))
-    os.mkdir(newPath)
+    os.makedirs(newPath, exist_ok=True)
 else:
-    os.mkdir(newPath)
+    os.makedirs(newPath, exist_ok=True)
 
 print(bcolors.OKGREEN + '[' + elapsedTime() +
-      ' INFO]' + ' Created new path: ' + newPath)
+      ' INFO]' + bcolors.RESET + ' Created new path: ' + newPath)
 
-os.mkdir(newPath + '/original')
-
-print(bcolors.OKGREEN + '[' + elapsedTime() +
-      ' INFO]' + ' Created new path: ' + newPath + '/original')
-
-imgIn.save(newPath + '/original/equirectangular.png')
+os.makedirs(newPath + '/original', exist_ok=True)
 
 print(bcolors.OKGREEN + '[' + elapsedTime() +
-      ' INFO]' + ' Saved original File: ' + newPath + '/original/equirectangular.png')
+      ' INFO]' + bcolors.RESET + ' Created new path: ' + newPath + '/original')
+
+shutil.copyfile(sys.argv[1], newPath + '/original/equirectangular.jpg')
+
+print(bcolors.OKGREEN + '[' + elapsedTime() +
+      ' INFO]' + bcolors.RESET + ' Saved original File: ' + newPath + '/original/equirectangular.jpg')
 
 map_x_32, map_y_32 = generate_mapping_data(inSize[0])
 cubemap = cv2.remap(numpy.array(imgIn), map_x_32, map_y_32, cv2.INTER_LINEAR)
 
 print(bcolors.OKGREEN + '[' + elapsedTime() +
-      ' INFO]' + ' Created Cubemap')
+      ' INFO]' + bcolors.RESET + ' Created Cubemap binaries')
 
 
 imgOut = Image.fromarray(cubemap)
 
 print(bcolors.OKGREEN + '[' + elapsedTime() +
-      ' INFO]' + ' Created Cubemap image')
+      ' INFO]' + bcolors.RESET + ' Converted Cubemap into image')
 
 os.makedirs(newPath + '/processed/uncompressed')
 
 print(bcolors.OKGREEN + '[' + elapsedTime() +
-      ' INFO]' + ' Created new path: ' + newPath + '/processed/uncompressed')
+      ' INFO]' + bcolors.RESET + ' Created new path: ' + newPath + '/processed/uncompressed')
 
-imgOut.save(newPath + "/processed/uncompressed/cubemap.png")
+imgOut.save(newPath + "/processed/uncompressed/cubemap.jpg", optimize=True)
 
 print(bcolors.OKGREEN + '[' + elapsedTime() +
-      ' INFO]' + ' Saved Cubemap image')
+      ' INFO]' + bcolors.RESET + ' Saved Cubemap image')
 
 # imgOut.show()
